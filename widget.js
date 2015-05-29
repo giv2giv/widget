@@ -2,8 +2,8 @@
 
 var jQuery, $; // Localize jQuery variables
 
-var HOST = 'http://localhost:8080'; // also set host in widget_example.html
-var APIHOST = 'http://localhost:3000';
+var HOST = 'http://localhost:8080/'; // also set host in widget_example.html
+var APIHOST = 'http://localhost:3000/api/';
 var STRIPE_KEY = 'pk_test_d678rStKUyF2lNTZ3MfuOoHy';
 
 
@@ -124,7 +124,9 @@ function main() {
           modal: true,
           fluid: true,
           buttons: {
-            Submit: function(){
+            Submit: function( event ){
+              event.preventDefault();
+              frm.find('button').prop('disabled', true);
 
               // increase amount if donor assuming fees
               charityPrefs.assume_fees==true ? amount.val(parseStrToNum(amount.val())+calculateFee(amount)) : "";
@@ -137,27 +139,41 @@ function main() {
               } 
               else { // is stripe
                 // Disable the submit button to prevent repeated clicks
-                frm.find('button').prop('disabled', true);
+                
 
                 Stripe.card.createToken(frm, function(status, response) {
                   if (response.error) {
                     // Show the errors on the form
-                    frm.find('.payment-errors').text(response.error.message);
+                    frm.find('#giv2giv-results').text(response.error.message);
                     frm.find('button').prop('disabled', false);
                   } else {
-                    // response contains id and card, which contains additional card details
+                    // charge success
+                    // response contains id, token and card, which contains additional card details like last4
                     var token = response.id;
+
                     // Insert the token into the form so it gets submitted to the server
+                    frm.append($('<input type="hidden" name="giv2giv-stripeToken" />').val(token));
+                    //convert the donation string $52.34 to a number
                     amount.val(parseStrToNum(amount.val()));
-                    frm
-                      .append($('<input type="hidden" name="giv2giv-stripeToken" />').val(token))
-                      .attr('action', APIHOST + '/charity/' + charity.id + '/stripe.json')
-                      .submit();
+
                   }
+
+                  // for both processors, submit charity, token and donation details to giv2giv
+                  $.ajax({
+                    data: frm.serialize(),
+                    url: APIHOST + '/charity/' + charity.id + '/' + whichProcessor() + '.json',
+                    cache: false
+                  }).done(function (response) {
+
+                    console.log(response);
+
+                    // Show the success on the form
+                    $( "#giv2giv-results" ).dialog( "open" );
+
+                  })                 
 
                 });
               }
-              // Prevent the form from submitting with the default action
               return false;
             },
             Cancel: function() {
@@ -172,22 +188,6 @@ function main() {
         // Show widget when button clicked
         div.button().on( "click", function() {
           dialog.dialog( "open" );
-        });
-
-        // Form submitted
-        frm.on( "submit", function( event ) {
-          if (whichProcessor()=='stripe') {
-            event.preventDefault();
-            $.ajax({
-              data: frm.serialize(),
-              url: APIHOST + '/charity/' + charity.id + '/' + whichProcessor() + '.json',
-              cache: false
-            })
-            .done(function ( response ) {
-              console.log(response);
-              // show 'Thank you!' maybe with print
-            });
-          }
         });
 
         // Init the amount slider
@@ -223,7 +223,6 @@ function main() {
         $.getScript("https://js.stripe.com/v2/", function() {
             Stripe.setPublishableKey(STRIPE_KEY);
         });
-
 
         // Attach listeners to the amount input fields to update the slider when amount is changed
         amount
@@ -351,6 +350,20 @@ function main() {
 
         });
 
+        $( "#giv2giv-results" ).dialog({
+          autoOpen: false,
+          modal: true,
+          buttons: {
+            Ok: function() {
+              $( this ).dialog( "close" );
+              $( "#giv2giv-dialog" ).dialog( "close" );
+            }
+          },
+          close: function() { 
+            $( "#giv2giv-dialog" ).dialog( "close" );
+          }
+        })
+
       /*
         // Bind form enter key
         $("form").not('#frm-feedback').find("input").last().keydown(function(e) {
@@ -408,8 +421,8 @@ var returnFormattedDonationDetails = function (amount, passthru, assumeFees) {
 var returnFormattedAmountDetails = function (amount) {
   var fee = calculateFee(amount);
   return "Assume transaction fee of " + fee.formatMoney(2, '.', ',') +"?";
-
 }
+
 
 var whichProcessor = function() {
   if ($('#giv2giv-tabs').tabs('option','active')==0)
