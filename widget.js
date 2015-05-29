@@ -144,7 +144,8 @@ function main() {
                 Stripe.card.createToken(frm, function(status, response) {
                   if (response.error) {
                     // Show the errors on the form
-                    frm.find('#giv2giv-results').text(response.error.message);
+                    $( "#giv2giv-results" ).text(response.error.message);
+                    $( "#giv2giv-results" ).dialog( "open" );
                     frm.find('button').prop('disabled', false);
                   } else {
                     // charge success
