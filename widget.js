@@ -133,9 +133,7 @@ function main() {
 
               if ($('#giv2giv-tabs').tabs('option','active')==0) { // if tab 0 selected, dwolla
                 
-                frm
-                  .attr('action', APIHOST + '/charity/' + charity.id + '/dwolla')
-                  .submit();
+                
               } 
               else { // is stripe
                 // Disable the submit button to prevent repeated clicks
@@ -159,23 +157,20 @@ function main() {
 
                   }
 
-                  // for both processors, submit charity, token and donation details to giv2giv
-                  $.ajax({
-                    data: frm.serialize(),
-                    url: APIHOST + '/charity/' + charity.id + '/' + whichProcessor() + '.json',
-                    cache: false
-                  }).done(function (response) {
-
-                    console.log(response);
-
-                    // Show the success on the form
-                    $( "#giv2giv-results" ).dialog( "open" );
-
-                  })                 
-
                 });
               }
-              return false;
+
+              // for both processors, submit charity, token and donation details to giv2giv
+              $.ajax({
+                data: frm.serialize(),
+                url: APIHOST + '/charity/' + charity.id + '/' + whichProcessor() + '.json',
+                cache: false
+              }).done(function (response) {
+                console.log(response);
+                // Show the success on the form
+                $( "#giv2giv-results" ).dialog( "open" );
+              });
+
             },
             Cancel: function() {
               dialog.dialog( "close" );
