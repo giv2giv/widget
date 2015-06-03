@@ -2,8 +2,8 @@
 
 var jQuery, $; // Localize jQuery variables
 
-var HOST = 'http://localhost:8080/'; // also set host in widget_example.html
-var APIHOST = 'http://localhost:3000/api/';
+var HOST = 'http://widget.giv2giv.org/'; // also set host in widget_example.html
+var APIHOST = 'http://apitest.giv2giv.org/api/';
 var STRIPE_KEY = 'pk_test_d678rStKUyF2lNTZ3MfuOoHy';
 
 
@@ -131,13 +131,13 @@ function main() {
               // increase amount if donor assuming fees
               charityPrefs.assume_fees==true ? amount.val(parseStrToNum(amount.val())+calculateFee(amount)) : "";
 
-              if ($('#giv2giv-tabs').tabs('option','active')==0) { // if tab 0 selected, dwolla
-                
-                
+              if (whichProcessor()=='dwolla') {
+                 frm
+                  .attr('action', APIHOST + '/charity/' + charity.id + '/dwolla.json')
+                  .submit();
               } 
-              else { // is stripe
+              else if (whichProcessor()=='stripe') { // is stripe
                 // Disable the submit button to prevent repeated clicks
-                
 
                 Stripe.card.createToken(frm, function(status, response) {
                   if (response.error) {
@@ -155,22 +155,20 @@ function main() {
                     //convert the donation string $52.34 to a number
                     amount.val(parseStrToNum(amount.val()));
 
+                    $.ajax({
+                      data: frm.serialize(),
+                      url: APIHOST + '/charity/' + charity.id + '/' + whichProcessor() + '.json',
+                      cache: false
+                    }).done(function (response) {
+                      console.log(response);
+                      // Show the success on the form
+                      $( "#giv2giv-results" ).dialog( "open" );
+                    });
+
                   }
 
                 });
               }
-
-              // for both processors, submit charity, token and donation details to giv2giv
-              $.ajax({
-                data: frm.serialize(),
-                url: APIHOST + '/charity/' + charity.id + '/' + whichProcessor() + '.json',
-                cache: false
-              }).done(function (response) {
-                console.log(response);
-                // Show the success on the form
-                $( "#giv2giv-results" ).dialog( "open" );
-              });
-
             },
             Cancel: function() {
               dialog.dialog( "close" );
