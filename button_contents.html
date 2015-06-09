@@ -20,9 +20,6 @@ Donate Now!
             <br style="clear:both;" />
           </div>
 
-          <label for "giv2giv-passthru-slider">
-            Send how much to charity now? The remainder will be invested to make quarterly grants.
-          </label>
 
           <div id="giv2giv-bank-tab"></div>
             <div id="giv2giv-credit-tab">
@@ -54,9 +51,15 @@ Donate Now!
                     <input type="text" size="20" id="giv2giv-email" name="giv2giv-email">
                   </label>
                 </div>
-             </span>
-          </div>
+                <div class="fee_add">
+                  <input type="checkbox" name="giv2giv-add-fees" id="giv2giv-add-fees" value="1" />
+                  <label for="giv2giv-add-fees" id="giv2giv-add-fees-label"></label>
+                </div>
+             </div>
           
+          <label for "giv2giv-passthru-slider">
+            Send how much to charity now? The remainder will be invested to make quarterly grants.
+          </label>
           <div style="padding-bottom:20px;">
             <input style="float:left;" type="text" size="3" id="giv2giv-passthru-percent" name="giv2giv-passthru-percent" />
             <div style="float:left; width: 300px; height: 40px;">
@@ -73,18 +76,12 @@ Donate Now!
             </select>
           </div>
 
-          <div class="fee_assumption">
-            <input type="checkbox" name="giv2giv-assume-fees" id="giv2giv-assume-fees" value="1" />
-            <label for="giv2giv-assume-fees" id="giv2giv-assume-fees-label"></label>
-            <!-- TODO: Where is the actual text? Mind want to change wording. Need % sign? Use tooltip here instead of accordian below -->
-          </div>
-
           <div class="small" id="giv2giv-donation-details"></div>
 
           <div id="giv2giv-accordion">
             <h3>Understanding Fees</h3>
             <div>
-              The payment fee depends on the donation method. You can either assume the cost or allow the nonprofit to pay the fee. By default the nonprofit will assume the cost. <br /><br />Here is fee table to give you a good sense of the process:||Dwolla:|$10 and under = free to send/receive money|$10.01 and over = flat fee of 25&cent;||Credit Card:|2.9% + 30&cent; for any transaction.||Some participating organizations have sponsors that help cover the costs of processing fees.
+              The payment fee depends on the donation method. You can either assume the cost or ask the nonprofit to pay the fee out of your donation. By default the donor will assume the cost. <br /><br />Here is fee table to give you a good sense of the process:||Dwolla:| free to send/receive money||Credit Card:|2.9% + 30&cent; for any transaction.||Some participating organizations have sponsors that help cover the costs of processing fees.
             </div>
           </div>
         </div>

@@ -45,7 +45,7 @@ function main() {
         inc: script.data('incremenent'),
         initial_amount: script.data('initial-amount'),
         initial_passthru: script.data('initial-passthru'),
-        assume_fees: script.data('donor-assumes-fees')
+        add_fees: script.data('donor-add-fees')
       },
       div = $('#giv2giv-button'),
       frm = $('#giv2giv-form'),
@@ -55,8 +55,8 @@ function main() {
       amount = $('#giv2giv-amount'),
       passthru = $('#giv2giv-passthru-percent'),
       donationDetails = $('#giv2giv-donation-details'),
-      assumeFeesLabel = $('#giv2giv-assume-fees-label'),
-      assumeFees = $('#giv2giv-assume-fees'),
+      addFeesLabel = $('#giv2giv-add-fees-label'),
+      addFees = $('#giv2giv-add-fees'),
       charityPrefs = $.extend({
         charity_id: null,
         minamt: 5.00,
@@ -66,7 +66,7 @@ function main() {
         inc: 1.00,
         initial_amount: 25,
         initial_passthru: 50,
-        assume_fees: true
+        add_fees: true
       }, charity_preferences);      
 
 
@@ -94,7 +94,7 @@ function main() {
         }
       );
 
-      assumeFees.prop("checked", charityPrefs.assume_fees==true);
+      addFees.prop("checked", charityPrefs.add_fees==true);
 
       if (charityPrefs.charity_id == null) {
         var div_html = "script tag missing data-charity-id=YOURCHARITYID";
@@ -105,11 +105,11 @@ function main() {
       // tabify bank account / credit card tabs
       $( "#giv2giv-tabs" ).tabs({
         activate: function() {
-          donationDetails.empty().append(returnFormattedDonationDetails(amount, passthru, assumeFees));
-          assumeFeesLabel.html(returnFormattedAmountDetails(amount));
+          donationDetails.empty().append(returnFormattedDonationDetails(amount, passthru, addFees));
+          addFeesLabel.html(returnFormattedAmountDetails(amount));
         },
         create: function() {
-          donationDetails.empty().append(returnFormattedDonationDetails(amount, passthru, assumeFees));
+          donationDetails.empty().append(returnFormattedDonationDetails(amount, passthru, addFees));
         }
       });
 
@@ -129,7 +129,7 @@ function main() {
               frm.find('button').prop('disabled', true);
 
               // increase amount if donor assuming fees
-              charityPrefs.assume_fees==true ? amount.val(parseStrToNum(amount.val())+calculateFee(amount)) : "";
+              charityPrefs.add_fees==true ? amount.val(parseStrToNum(amount.val())+calculateFee(amount)) : "";
 
               if (whichProcessor()=='dwolla') {
                  frm
@@ -243,8 +243,8 @@ function main() {
             }
 
             // Update details
-            donationDetails.html(returnFormattedDonationDetails(amount, passthru, assumeFees));
-            assumeFeesLabel.html(returnFormattedAmountDetails(amount));
+            donationDetails.html(returnFormattedDonationDetails(amount, passthru, addFees));
+            addFeesLabel.html(returnFormattedAmountDetails(amount));
           })
           .on('click', function() {
             // Select all text in input field
@@ -279,7 +279,7 @@ function main() {
             }
 
             // Update details
-            donationDetails.html(returnFormattedDonationDetails(amount, passthru, assumeFees));
+            donationDetails.html(returnFormattedDonationDetails(amount, passthru, addFees));
 
           })
           .on('click', function() {
@@ -303,11 +303,11 @@ function main() {
           .trigger('update');
 
         // Fee assumption toggle button
-        assumeFees.change(function() {
+        addFees.change(function() {
           var el = $(this);
-          charityPrefs.assumeFees = el.is(':checked');
-          donationDetails.empty().append(returnFormattedDonationDetails(amount, passthru, assumeFees));
-          assumeFeesLabel.html(returnFormattedAmountDetails(amount));
+          charityPrefs.addFees = el.is(':checked');
+          donationDetails.empty().append(returnFormattedDonationDetails(amount, passthru, addFees));
+          addFeesLabel.html(returnFormattedAmountDetails(amount));
           amount.trigger('update'); // Update tooltips
           passthru.trigger('update'); // Update tooltips
         });
@@ -371,8 +371,8 @@ function main() {
 
         // Generate and update tooltips
         var rawVal = parseStrToNum(amount.val()) || gatewayOpts.min
-        var stripeMoneyLeft = gatewayOpts.assumeFees ? rawVal : (rawVal - ((rawVal * 0.029) + 0.30)),
-          dwollaMoneyLeft = gatewayOpts.assumeFees ? rawVal : (rawVal - (rawVal > 10 ? 0.25 : 0));
+        var stripeMoneyLeft = gatewayOpts.addFees ? rawVal : (rawVal - ((rawVal * 0.029) + 0.30)),
+          dwollaMoneyLeft = gatewayOpts.addFees ? rawVal : (rawVal - (rawVal > 10 ? 0.25 : 0));
 
         stripePayBtn
           .data('tooltip', 'The nonprofit will receive <strong>$' + stripeMoneyLeft.formatMoney(2, '.', ',') + '</strong> (after fees) using this method');
@@ -390,10 +390,10 @@ function main() {
 /**
  * Returns an HTML string with the donations details
 */
-var returnFormattedDonationDetails = function (amount, passthru, assumeFees) {
+var returnFormattedDonationDetails = function (amount, passthru, addFees) {
   var val, transactionAmount, amount_passthru, percent_passthru, amount_invested, net_amount=0, fee=0;
 
-  if (assumeFees.is(':checked')) {
+  if (addFees.is(':checked')) {
     transactionAmount = parseStrToNum(amount.val()) + calculateFee(amount);
   }
   else {
@@ -414,7 +414,7 @@ var returnFormattedDonationDetails = function (amount, passthru, assumeFees) {
 
 var returnFormattedAmountDetails = function (amount) {
   var fee = calculateFee(amount);
-  return "Assume transaction fee of " + fee.formatMoney(2, '.', ',') +"?";
+  return "Add transaction fee of " + fee.formatMoney(2, '.', ',') +"?";
 }
 
 
@@ -433,13 +433,13 @@ var calculateFee = function (amount) {
   var thisAmount = parseStrToNum(amount.val());
   switch (whichProcessor()) {
     case "stripe":
-      fee = 0.3 + (.029 * thisAmount);
+      fee = 0.3 + parseFloat((.029 * thisAmount).toFixed(2));
     break;
     case "dwolla":
       fee = 0.0
-      if (thisAmount > 10.0) {
-        fee = 0.25;
-      }
+      //if (thisAmount > 10.0) {
+        //fee = 0.25;
+      //}
     break;
     default:
       fee = 0.0;
