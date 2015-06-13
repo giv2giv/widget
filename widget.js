@@ -2,8 +2,9 @@
 
 var jQuery, $; // Localize jQuery variables
 
-var HOST = 'http://widget.giv2giv.org/'; // also set host in widget_example.html
-var APIHOST = 'http://apitest.giv2giv.org/api/';
+var HOST = 'http://localhost:8080/'; // also set host in widget_example.html
+//var APIHOST = 'http://localhost:3000/api';
+var APIHOST = 'http://apitest.giv2giv.org/api';
 var STRIPE_KEY = 'pk_test_d678rStKUyF2lNTZ3MfuOoHy';
 
 
@@ -406,9 +407,11 @@ var returnFormattedDonationDetails = function (amount, passthru, addFees) {
   amount_passthru = net_amount * percent_passthru;
   amount_invested = net_amount - amount_passthru;
 
-  val = "<h3>Summary:</h3>You will donate: $" + transactionAmount.formatMoney(2, '.', ',');
-  val += "<br />$" + amount_passthru.formatMoney(2, '.', ',') + " will be sent to the charities for immediate impact.";
-  val += "<br />$" + amount_invested.formatMoney(2, '.', ',') + " will be invested, becoming a legacy that grants to your charities forever!";
+  val = "<h3>Summary:</h3>";
+  val += "<li>$" + amount_passthru.formatMoney(2, '.', ',') + " will be immediately sent to the charity</li>";
+  val += "<li>$" + amount_invested.formatMoney(2, '.', ',') + " will be invested to sustain the charity over time</li>";
+  val += "</ul>";
+  val += "<br />Your total donation today is: $" + transactionAmount.formatMoney(2, '.', ',');
   return val;
 }
 
