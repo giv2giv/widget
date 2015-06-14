@@ -2,8 +2,7 @@
 
 var jQuery, $; // Localize jQuery variables
 
-var HOST = 'http://localhost:8080/'; // also set host in widget_example.html
-//var APIHOST = 'http://localhost:3000/api';
+var HOST = 'http://widget.giv2giv.org/'; // also set host in widget_example.html
 var APIHOST = 'http://apitest.giv2giv.org/api';
 var STRIPE_KEY = 'pk_test_d678rStKUyF2lNTZ3MfuOoHy';
 
@@ -462,9 +461,15 @@ var calculateFee = function (amount) {
  * @return {number} parsed number
 */
 var parseStrToNum = function(str) {
-  var val = +str.replace(/[^0-9\.]+/g, '');
+  var num = +str.replace(/[^0-9\.]+/g, '');
+  var dec = 2;
+  var d = 1;
+  for (var i=0; i<dec; i++){
+    d += "0";
+  }
+  return Math.round(num * d) / d;
 
-  return val;
+  //return val;
 }
 
 /**

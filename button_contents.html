@@ -30,13 +30,6 @@ Donate Now!
                 <input type="text" size="20" data-stripe="number" value="4242424242424242"/>
               </label>
             </div>
-
-            <div class="form-row">
-              <label>
-                <span>CVC</span>
-                <input type="text" size="4" data-stripe="cvc" value="123"/>
-              </label>
-            </div>
             <div class="form-row">
               <label>
                 <span>Expiration (MM/YYYY)</span>
@@ -44,6 +37,12 @@ Donate Now!
               </label>
               <span> / </span>
               <input type="text" size="4" data-stripe="exp-year" value="2015" />
+            </div>
+            <div class="form-row">
+               <label>
+                 <span>CVV</span>
+                 <input type="text" size="4" data-stripe="cvc" value="123"/>
+               </label>
             </div>
             <div class="form-row">
               <label>
@@ -57,7 +56,7 @@ Donate Now!
             </div>
           </div>
           <label for "giv2giv-passthru-slider">
-            Send how much to charity now? The remainder will be invested to make quarterly grants.
+            Send how much to charity now? The remainder will be invested.
           </label>
           <div style="padding-bottom:20px;">
             <input style="float:left;" type="text" size="3" id="giv2giv-passthru-percent" name="giv2giv-passthru-percent" />
