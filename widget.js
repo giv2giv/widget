@@ -2,7 +2,7 @@
 
 var jQuery, $; // Localize jQuery variables
 
-var HOST = 'http://widget.giv2giv.org/'; // also set host in widget_example.html
+var HOST = 'http://localhost:8001'; // also set host in widget_example.html
 var APIHOST = 'http://apitest.giv2giv.org/api';
 var STRIPE_KEY = 'pk_test_d678rStKUyF2lNTZ3MfuOoHy';
 
@@ -26,6 +26,8 @@ function loadScript(url, callback) {
   }
   (document.getElementsByTagName("head")[0] || document.documentElement).appendChild(scriptTag);
 }
+
+
 
 function main() {
 
@@ -102,6 +104,8 @@ function main() {
         return;
       }
 
+
+
       // tabify bank account / credit card tabs
       $( "#giv2giv-tabs" ).tabs({
         activate: function() {
@@ -112,6 +116,10 @@ function main() {
           donationDetails.empty().append(returnFormattedDonationDetails(amount, passthru, addFees));
         }
       });
+
+
+
+
 
       var json_url = APIHOST + "/charity/"+charityPrefs.charity_id+"/widget_data.json";
 
@@ -356,7 +364,37 @@ function main() {
           close: function() { 
             $( "#giv2giv-dialog" ).dialog( "close" );
           }
-        })
+        });
+
+
+//     Load the FB.ui JS library
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '642257835904820',
+          xfbml      : true,
+          version    : 'v2.3'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+          js = d.createElement(s); js.id = id;
+          js.src = "//connect.facebook.net/en_US/sdk.js";
+          fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+
+
+//    Share on facebook code
+     $('#fb-share').click(function() {
+        FB.ui({
+          method: 'feed',
+          link: 'https://giv2giv.org/#charity/' + $('#giv2giv-script').attr('data-charity-id'),
+          caption: 'I just donated to ' + charity.name + 'using Giv2Giv!',
+        }, function(response){});
+
+      })
+
+
 
       /*
         // Bind form enter key
@@ -383,8 +421,9 @@ function main() {
       */
 
       }); // getJSON end
-  //});
-} // end main()
+
+
+  } // end main()
 
 
 /**
@@ -450,6 +489,7 @@ var calculateFee = function (amount) {
 }
 
 
+
 /**
  * Parses a string into a number
  *
@@ -510,3 +550,6 @@ loadScript("//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js", functi
 
 
 }(window, document)); /* end IIFE */
+
+
+
