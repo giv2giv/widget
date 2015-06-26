@@ -384,6 +384,8 @@ function main() {
       }(document, 'script', 'facebook-jssdk'));
 
 
+
+
 //    Share on facebook code
      $('#fb-share').click(function() {
         FB.ui({
@@ -394,7 +396,7 @@ function main() {
 
       })
 
-
+     $('#twitter-share').attr("href", "https://twitter.com/intent/tweet?text=" + "I donated to a charity using Giv2Giv! Check it out here!&url=https://giv2giv.org/#charity/" + $('#giv2giv-script').attr('data-charity-id'))
 
       /*
         // Bind form enter key
