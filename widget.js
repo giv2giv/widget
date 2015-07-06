@@ -2,7 +2,7 @@
 
 var jQuery, $; // Localize jQuery variables
 
-var HOST = 'http://localhost:8001'; // also set host in widget_example.html
+var HOST = 'http://widget.giv2giv.org'; // also set host in widget_example.html
 var APIHOST = 'http://apitest.giv2giv.org/api';
 var STRIPE_KEY = 'pk_test_d678rStKUyF2lNTZ3MfuOoHy';
 
@@ -47,7 +47,8 @@ function main() {
         inc: script.data('incremenent'),
         initial_amount: script.data('initial-amount'),
         initial_passthru: script.data('initial-passthru'),
-        add_fees: script.data('donor-add-fees')
+        add_fees: script.data('donor-add-fees'),
+        return_url: script.data('return-url')
       },
       div = $('#giv2giv-button'),
       frm = $('#giv2giv-form'),
@@ -68,7 +69,8 @@ function main() {
         inc: 1.00,
         initial_amount: 25,
         initial_passthru: 50,
-        add_fees: true
+        add_fees: true,
+        return_url: "https://giv2giv.org/#charity/" + charity_preferences.charity_id
       }, charity_preferences);      
 
 
@@ -367,36 +369,33 @@ function main() {
         });
 
 
-//     Load the FB.ui JS library
-      window.fbAsyncInit = function() {
-        FB.init({
-          appId      : '642257835904820',
-          xfbml      : true,
-          version    : 'v2.3'
-        });
-      };
-      (function(d, s, id){
-         var js, fjs = d.getElementsByTagName(s)[0];
-         if (d.getElementById(id)) {return;}
-          js = d.createElement(s); js.id = id;
-          js.src = "//connect.facebook.net/en_US/sdk.js";
-          fjs.parentNode.insertBefore(js, fjs);
-      }(document, 'script', 'facebook-jssdk'));
+  //     Load the FB.ui JS library
+        window.fbAsyncInit = function() {
+          FB.init({
+            appId      : '668544863276117',
+            xfbml      : true,
+            version    : 'v2.3'
+          });
+        };
+        (function(d, s, id){
+           var js, fjs = d.getElementsByTagName(s)[0];
+           if (d.getElementById(id)) {return;}
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
 
+  //    Share on facebook code
+       $('#fb-share').click(function() {
+          FB.ui({
+            method: 'feed',
+            link: charityPrefs.return_url,
+            caption: 'I just donated to ' + charity.name + ' using Giv2Giv!',
+          }, function(response){});
 
+        })
 
-
-//    Share on facebook code
-     $('#fb-share').click(function() {
-        FB.ui({
-          method: 'feed',
-          link: 'https://giv2giv.org/#charity/' + $('#giv2giv-script').attr('data-charity-id'),
-          caption: 'I just donated to ' + charity.name + 'using Giv2Giv!',
-        }, function(response){});
-
-      })
-
-     $('#twitter-share').attr("href", "https://twitter.com/intent/tweet?text=" + "I donated to a charity using Giv2Giv! Check it out here!&url=https://giv2giv.org/#charity/" + $('#giv2giv-script').attr('data-charity-id'))
+       $('#twitter-share').attr("href", "https://twitter.com/intent/tweet?text=" + "I donated to a charity using Giv2Giv! Check it out here!&url=" + charityPrefs.return_url);
 
       /*
         // Bind form enter key
