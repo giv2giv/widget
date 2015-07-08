@@ -539,14 +539,10 @@ loadScript("//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js", functi
 
   $('#giv2giv-button').load(HOST+'/button_contents.html');
 
-  loadScript("jquery-ui.min.js", function() { // load locally-modified JS
-    initjQueryUIPlugin(jQuery);
-    loadScript("jquery.validate.min.js", function() {
-      initjQueryValidatePlugin(jQuery);
-      main(); // call our main function
-    });
+  loadScript("vendor.js", function() { // load external plugins
+    initVendors(jQuery);
+    main(); // call our main function
   });
-
 });
 
 
