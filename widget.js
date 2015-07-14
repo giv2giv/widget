@@ -2,10 +2,9 @@
 
 var jQuery, $; // Localize jQuery variables
 
-var HOST = 'http://widget.giv2giv.org'; // also set host in widget_example.html
+var HOST = 'http://localhost'; // also set host in widget_example.html
 var APIHOST = 'http://apitest.giv2giv.org/api';
 var STRIPE_KEY = 'pk_test_d678rStKUyF2lNTZ3MfuOoHy';
-
 
 function loadScript(url, callback) {
   /* Load script from url and calls callback once it's loaded */
@@ -27,14 +26,13 @@ function loadScript(url, callback) {
   (document.getElementsByTagName("head")[0] || document.documentElement).appendChild(scriptTag);
 }
 
-
-
 function main() {
 
 //    $(function() {
 
       /* The main logic of our widget is here */
       /* We should have fully loaded jquery, jquery-ui and all plugins */
+      var card = new Skeuocard($("#giv2giv-card-input"));
 
       var script = $('#giv2giv-script'),
 
@@ -90,6 +88,13 @@ function main() {
       giv2givLink.media = 'all';
       giv2givHead.appendChild(giv2givLink);
     
+      var vendorCSS  = document.createElement('link');
+      vendorCSS.rel  = 'stylesheet';
+      vendorCSS.type = 'text/css';
+      vendorCSS.href = 'css/vendor.css';
+      vendorCSS.media = 'all';
+      giv2givHead.appendChild(vendorCSS);
+
       div.css(
         {
           'border':'3px solid black',
@@ -130,7 +135,7 @@ function main() {
           autoOpen: false,
           title: "Donate to " + charity.name + " through giv2giv.org",
           height: 'auto',
-          width: '450px',
+          width: '650px',
           modal: true,
           fluid: true,
           buttons: {
@@ -537,11 +542,11 @@ loadScript("//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js", functi
      new jQuery in our local jQuery variables. */
   $ = jQuery = window.jQuery.noConflict(true);
 
-  $('#giv2giv-button').load(HOST+'/button_contents.html');
-
-  loadScript("vendor.js", function() { // load external plugins
-    initVendors(jQuery);
-    main(); // call our main function
+  $('#giv2giv-button').load(HOST+'/button_contents.html', function() {
+    loadScript("vendor.js", function() { // load locally-modified JS
+      initVendors(jQuery);
+      main(); // call our main function
+    });
   });
 });
 
